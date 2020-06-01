@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import Header from './components/Header'
+import Header from './components/Header';
+import Clock from './components/Clock';
 
 
 class App extends Component {
@@ -9,7 +10,8 @@ class App extends Component {
     this.state = { 
       id: 1,
       post: {},
-      message: 'Lifecycle' 
+      message: 'Lifecycle',
+      showClock: true 
     };
   }
   
@@ -43,6 +45,13 @@ class App extends Component {
     this.setState({message: 'Lifecycle cambiado'})
   }
 
+  handlerUpdate = () => {
+    this.forceUpdate()
+  }
+
+  handlerClock = () => {
+    this.setState({showClock: !this.state.showClock})
+  }
 
   async componentDidUpdate(prevProps, prevState){
     console.log(prevState.id, this.state.id)
@@ -64,6 +73,9 @@ class App extends Component {
       return (
       <>
         <Header title={this.state.message}/>
+        {this.state.showClock && <Clock />}
+        
+
         <Fragment>
         
           <div>
@@ -79,6 +91,12 @@ class App extends Component {
               <Fragment>
                 <button onClick={this.handlerId}>Next ID</button>
                 <button onClick={this.handlerMessage}>Change Header</button>
+                <button onClick={this.handlerUpdate}>Force Update</button>
+                <button onClick={this.handlerClock}>
+                  {
+                    this.state.showClock ? "Hide clock" : "Show clock"
+                  }
+                </button>
                 <h2>Post con id: {this.state.id}</h2>
                 <h2>{post.title}</h2>
                 <p>{post.body}</p>
@@ -142,12 +160,18 @@ Asignacion de eventos
 Actualizacion del estado
 
 
-
 componentDidUpdate con state
 Este ciclo se va a disparar cuando cambien las props (New props), cuando cambie el estado (set­State) o cuando hagamos un force­Update().
 
 
+Método componentWillUnmount
 
+Memory leak (fugas de memoria)
+Suceden cuanto tenemos eventos, intervalos o cualquier tipo de automatizacion que esta preparada para funcionar sobre un componente y ese componente por el motivo que fuera ya no esta (porque renderizamos nuevos componentes, porque lo estamos ocultando, etc). 
+
+Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+
+Siempre que se utilizan eventos, intervalos o cualquier codigo que este a la escucha de algo al desmontar el componente hay que limpiarlo para no tener fugas de memoria o afectar al rendimiento (ya que van quedando elementos en memoria cache).
 
 
 
